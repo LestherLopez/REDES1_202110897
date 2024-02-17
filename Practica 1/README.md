@@ -1,5 +1,5 @@
 ~~~
-Universidad San Carlos de Guatemala 2023
+Universidad San Carlos de Guatemala 2024
 Redes de computadoras 1
 Lesther Kevin Federico López Miculax - 202110897
 ~~~
