@@ -8,13 +8,64 @@ Lesther Kevin Federico López Miculax - 202110897
 
 ## Configuracion de routers R1, R2 Y R5
 
+Los routers R1, R2 Y R5 tienen diversas configuraciones, las primeras de ellas son las direcciones ips configuradas en cada una de ellas y sus interfaces.
+
+ips configuradas de R1
+
+![r1_ip](images/r1_ip.png)
+
+ips configuradas de R2
+
+![r2_ip](images/r2_ip.png)
+
+ips configuradas de R5
+
+![r5_ip](images/r5_ip.png)
+
+Los tres routers tambien tienen en sus configuracions la implementacion de rutas estaticas, las cuales se muestran a continuacion:
+
+rutas estaticas de R1
+
+![r1_ip](images/r1_ruteo.png)
+
+rutas estaticas de R2
+
+![r2_ip](images/r2_ruteo.png)
+
+rutas estaticas de R5
+
+![r5_ip](images/r5_ruteo.png)
+
+Por otro lado, en los R2 y R5 se colocó la configuración HSRP, por lo que se muestran en las siguientes imagenes estas configuraciones realizadas:
+
+HSRP de R2
+
+![r2_ip](images/r2_hsrp.png)
+
+HSRP de R5
+
+![r5_ip](images/r5_hsrp.png)
+
+
+
 ## Configuración de switch S1
+
+Dentro del switch S1 y su configuración se encuentra el Port-Channel realizado con PAGP, de este modo, se muestra en la siguiente imagen.
+
+
+![sw1_config](images/sw1_conf.png)
 
 ## Configuración de VPC11
 
+El VPC11 utilizó la siguiente configuración, donde se colocó su respectiva dirección ip, mascara de subred y dirección de enlace.
+
+![vpc11](images/vpc11.png)
+
+Configuración de vpc11
+
 ## Comandos Utilizados
 
-## Creación de ruta estática
+### Creación de ruta estática
 
 En primera instancia, se colocaron la ip en cada una de las interfaces de los routers con los siguientes comandos
 
@@ -37,24 +88,48 @@ En este comando, la dirección IP de destino (192.167.0.0) representa la red de 
 
 
 
-## Creación de PortChannel PAGP
+### Creación de PortChannel PAGP
 
-## Creación de PortChannel LACP
+En la pareja de switches SW0-SW1 se implementó PAGP para el port-channel de estos switches. La implementación de PAGP en la pareja de switches SW0-SW1 mejoró la capacidad de la red al tiempo que proporcionó redundancia y alta disponibilidad para el tráfico de datos entre los switches.
+
+1. SW0 
+    ```console
+    conf t
+    interface range f#/# - #
+    channel-group # mode desirable
+    no shutdown
+    ```
+2. SW1
+    ```console
+    conf t
+    interface range f#/# - #
+    channel-group # mode auto
+    no shutdown
+    ```
+
+
+### Creación de PortChannel LACP
 
 En la pareja de switches SW2-SW3 se implementó con LACP el PortChannel. LACP es un protocolo que permite la agregación de varios enlaces físicos entre dos dispositivos de red para formar un único enlace lógico de mayor ancho de banda y redundancia.
 
 Por consiguiente, se implementaron los siguientes comandos en los switches SW2-SW3
 
+1. SW2
+    ```console
+    conf t
+    interface range f#/# - #
+    channel-group # mode active
+    end
+    ```
+2. SW3
+    ```console
+    conf t
+    interface range f#/# - #
+    channel-group # mode passive
+    end
+    ```
 
-```console
-conf t
-interface range f#/# - #
-channel-group # mode on
-end
-```
-
-
-## IP virtual con HSRP
+### IP virtual con HSRP
 
 Las IP virtuales se crearon haciendo uso de la configuración HSRP en las parejas de routers R2-R3 y R5-R6. Al implementar HSRP, se establece una dirección IP virtual compartida entre los routers de cada pareja,  lo que garantiza que siempre haya un router activo para manejar el tráfico mientras que el otro permanece en espera para tomar el control en caso de que falle el router activo.
 
@@ -74,7 +149,7 @@ standby 1 ip 172.168.0.4
 no shutdown
 ```
 
-## Configuración de VPC
+### Configuración de VPC
 
 
 La configuración de las VPC se realizó de manera cuidadosa, asignando a cada una de ellas direcciones IP únicas y adecuadas para su entorno. Además, se configuró la puerta de enlace correspondiente a cada VPC para facilitar la comunicación dentro y fuera de la red virtual.
