@@ -1,0 +1,85 @@
+package main
+
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"log"
+	"net"
+	"os"
+	pb "servidor/proto"
+
+	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"google.golang.org/grpc"
+)
+
+type server struct {
+	pb.UnimplementedGetInfoServer
+}
+
+const (
+	port = ":3301"
+)
+
+type Data struct {
+	nombre_banda     string
+	nombre_album     string
+	anio_lanzamiento string
+	ranking          string
+}
+
+func producer(data Data) {
+	jsonData, errjson := json.Marshal(data)
+
+	if errjson != nil {
+		log.Println("Error al convertir a JSON:", errjson)
+		return
+	}
+
+	topic := "so1-proyecto2"
+
+	p, err = kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "10.72.150.195:9092"})
+
+	if err != nil {
+		log.Println("Error al crear el productor: %s", err)
+		os.Exit(1)
+		return
+	}
+
+	p.Produce(&kafka.Message{
+		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+		Key:            []byte("data"),
+		Value:          []byte(jsonData),
+	}, nil)
+
+	p.Flush(15 * 1000)
+
+	p.Close()
+
+}
+
+func (s *server) ReturnInfo(ctx context.Context, in *pb.RequestId) (*pb.ReplyInfo, error) {
+	fmt.Println("Recibí de cliente: ", in.GetNombreBanda())
+	data := Data{
+		nombre_banda:     in.GetNombreBanda(),
+		nombre_album:     in.GetNombreAlbum(),
+		anio_lanzamiento: in.GetAnioLanzamiento(),
+		ranking:          in.GetRanking(),
+	}
+	fmt.Println(data)
+	producer(data)
+	return &pb.ReplyInfo{Info: "Hola cliente, recibí el comentario"}, nil
+}
+
+func main() {
+	listen, err := net.Listen("tcp", port)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	s := grpc.NewServer()
+	pb.RegisterGetInfoServer(s, &server{})
+
+	if err := s.Serve(listen); err != nil {
+		log.Fatalln(err)
+	}
+}
