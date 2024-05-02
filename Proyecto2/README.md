@@ -241,6 +241,15 @@ Diego Abraham Robles Meza - 201901429
 
     do wr
     ```
+## Core 
+Para la implementacion del core se hizo uso de diversos tipos de ruteo y para esto se implementó FLSM, por lo que se obtuvo la siguiente tabla
+
+| Equipos | Mascara         | Wildcard | Id Red     | Primera IP | Ultima IP  | IP Broadcast |
+|---------|-----------------|----------|------------|------------|------------|--------------|
+| 62      | 255.255.255.192 | 0.0.0.63 | 10.0.0.0   | 10.0.0.1   | 10.0.0.62  | 10.0.0.63    |
+| 62      | 255.255.255.192 | 0.0.0.63 | 10.0.0.64  | 10.0.0.65  | 10.0.0.126 | 10.0.0.127   |
+| 62      | 255.255.255.192 | 0.0.0.63 | 10.0.0.128 | 10.0.0.129 | 10.0.0.190 | 10.0.0.191   |
+| 62      | 255.255.255.192 | 0.0.0.63 | 10.0.0.192 | 10.0.0.193 | 10.0.0.254 |  10.0.0.255  |
 
 ### Topología completa del proyecto
 
